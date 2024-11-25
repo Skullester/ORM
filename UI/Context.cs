@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace ORM;
 
@@ -7,7 +6,7 @@ public class Context : DbContext
 {
     public Context()
     {
-        Database.EnsureDeleted();
+        // Database.EnsureDeleted();
         Database.EnsureCreated();
     }
 
@@ -16,13 +15,10 @@ public class Context : DbContext
     public DbSet<Post> Posts { get; set; }
     public DbSet<Student> Students { get; set; }
     public DbSet<Group> Groups { get; set; }
-
     public DbSet<Semester> Semesters { get; set; }
-
-
-    // public DbSet<Grade> Grades { get; set; }
+    public DbSet<Grade> Grades { get; set; }
     public DbSet<Discipline> Disciplines { get; set; }
-    public DbSet<GradeStudentDiscipline> GradeStudentDiscipline { get; set; }
+    public DbSet<GradeStudentDiscipline> GradesStudentDisciplines { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -37,5 +33,6 @@ public class Context : DbContext
         modelBuilder.ApplyConfiguration(new PostConfiguration());
         modelBuilder.ApplyConfiguration(new GroupConfiguration());
         modelBuilder.ApplyConfiguration(new SemesterConfiguration());
+        modelBuilder.ApplyConfiguration(new GradeConfiguration());
     }
 }

@@ -1,6 +1,4 @@
-﻿using UI;
-
-namespace ORM;
+﻿namespace ORM;
 
 public class Program
 {
@@ -24,9 +22,9 @@ public class Program
         var graphFormatter = new GraphFormatter<INaming>(testGraph);
         var format = graphFormatter.Format();
         Console.Write(format);*/
-        GetManager().Start();
+        using var manager = GetManager();
+        manager.Start();
     }
-
 
     private static IManager GetManager() => new Manager();
 }

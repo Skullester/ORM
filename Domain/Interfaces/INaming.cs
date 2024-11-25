@@ -2,5 +2,5 @@
 
 public interface INaming
 {
-    string Name { get; set; }
+    string? Name { get; }
 }

@@ -14,5 +14,5 @@ public class Group : INaming
         SemesterId = semesterId;
     }
 
-    public override string ToString() => $"Группа {Name} Семестр: {Semester?.Name ?? "?"}:";
+    public override string ToString() => $"Группа {Name} Семестр {Semester?.Name ?? "?"}:";
 }

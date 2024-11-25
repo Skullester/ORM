@@ -1,5 +1,4 @@
-﻿using System.Text;
-using ORM;
+﻿using ORM;
 
 namespace UI;
 
@@ -9,7 +8,7 @@ public class GraphFormatter<T> : IGraphFormatter<T>
 
     public GraphFormatter(Graph<T> graph)
     {
-        this.Graph = graph;
+        Graph = graph;
         CheckGraphCapacity();
     }
 
@@ -24,7 +23,7 @@ public class GraphFormatter<T> : IGraphFormatter<T>
     public IEnumerable<(string, Node<T>)> Format()
     {
         var graphRoot = Graph.Root!;
-        return graphRoot.IsOpened ? FormatNode(graphRoot) : Enumerable.Empty<(string, Node<T>)>();
+        return graphRoot.IsSubNodesOpened ? FormatNode(graphRoot) : Enumerable.Empty<(string, Node<T>)>();
     }
 
     private IEnumerable<(string, Node<T>)> FormatNode(Node<T> node, int prevLevelLength = 0)
@@ -33,8 +32,9 @@ public class GraphFormatter<T> : IGraphFormatter<T>
         var element = elementName.PadLeft(prevLevelLength + elementName.Length);
         prevLevelLength = element.Length;
         yield return (element + Environment.NewLine, node);
-        var nodes = node.Nodes?.Where(x => x.IsOpened) ?? Enumerable.Empty<Node<T>>();
-        foreach (var item in nodes)
+        var subNodes = node.SubNodes ?? Enumerable.Empty<Node<T>>();
+        if (!node.IsSubNodesOpened) yield break;
+        foreach (var item in subNodes)
         {
             foreach (var str in FormatNode(item, prevLevelLength))
             {

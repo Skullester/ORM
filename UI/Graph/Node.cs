@@ -1,34 +1,33 @@
 ﻿using System.Collections;
-using System.Text;
 
 namespace ORM;
 
 public class Node<T> : IEnumerable<Node<T>>
 {
-    public IReadOnlySet<Node<T>>? Nodes => nodes;
+    public IReadOnlyList<Node<T>>? SubNodes => subNodes?.AsReadOnly();
     public T Element { get; }
-    private HashSet<Node<T>>? nodes;
-    public bool IsOpened { get; set; }
+    public bool IsSubNodesOpened { get; set; }
     public int DeepLevel { get; }
+    private List<Node<T>>? subNodes;
 
-    public Node(T element, bool isOpened = false, int deepLevel = 0)
+    public Node(T element, bool isSubNodesOpened = false, int deepLevel = 0)
     {
         Element = element;
         DeepLevel = deepLevel;
-        IsOpened = isOpened;
+        IsSubNodesOpened = isSubNodesOpened;
     }
 
-    private Node(IEnumerable<Node<T>> elements, T element, int deepLevel, bool isOpened = false) : this(element,
-        isOpened, deepLevel)
+    private Node(IEnumerable<Node<T>> elements, T element, int deepLevel, bool isSubNodesOpened = false) : this(element,
+        isSubNodesOpened, deepLevel)
     {
-        nodes = elements.ToHashSet();
+        subNodes = elements.ToList();
     }
 
-    public Node<T> AddNodeByValue(T value, bool isNodeOpened = false)
+    public Node<T> AddNodeByValue(T value, bool isSubNodesOpened = false)
     {
-        var newNode = new Node<T>(value, isNodeOpened, DeepLevel + 1);
-        nodes ??= new HashSet<Node<T>>();
-        nodes.Add(newNode);
+        var newNode = new Node<T>(value, isSubNodesOpened, DeepLevel + 1);
+        ValidateListSubnodes();
+        subNodes!.Add(newNode);
         return newNode;
     }
 
@@ -36,9 +35,30 @@ public class Node<T> : IEnumerable<Node<T>>
     {
         if (node.DeepLevel <= DeepLevel)
             throw new ArgumentException("Уровень глубины добавляемого узла должен быть больше текущего");
-        nodes ??= new HashSet<Node<T>>();
-        nodes.Add(node);
+        ValidateListSubnodes();
+        subNodes!.Add(node);
         return node;
+    }
+
+    public void AddNodes(IEnumerable<Node<T>> nodes)
+    {
+        foreach (var subNode in nodes)
+        {
+            AddNode(subNode);
+        }
+    }
+
+    public void AddNodesByValues(IEnumerable<T> values)
+    {
+        foreach (var value in values)
+        {
+            AddNodeByValue(value);
+        }
+    }
+
+    private void ValidateListSubnodes()
+    {
+        subNodes ??= new List<Node<T>>();
     }
 
     public static Node<T> Build(IEnumerable<T> subNodes, T element, int level, bool isNodeOpened = false) =>
@@ -47,16 +67,14 @@ public class Node<T> : IEnumerable<Node<T>>
     public IEnumerator<Node<T>> GetEnumerator()
     {
         yield return this;
-        if (nodes is null) yield break;
-        foreach (var node in nodes)
+        if (subNodes is null) yield break;
+        foreach (var node in subNodes)
         {
             foreach (var subNode in node)
             {
                 yield return subNode;
             }
         }
-
-        // return nodes?.Prepend(this).GetEnumerator() ?? Enumerable.Empty<Node>().GetEnumerator();
     }
 
     public Node<T>? this[Node<T> node] => GetNode(node, x => x);
@@ -66,8 +84,8 @@ public class Node<T> : IEnumerable<Node<T>>
     private Node<T>? GetNode<TValue>(TValue finding, Func<Node<T>, TValue> func)
     {
         if (ReferenceEquals(func(this), finding)) return this;
-        if (nodes is null) return null;
-        foreach (var item in nodes)
+        if (subNodes is null) return null;
+        foreach (var item in subNodes)
         {
             var foundNode = item.GetNode(finding, func);
             if (foundNode != null)

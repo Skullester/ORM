@@ -10,8 +10,11 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group>
         Group[] groups =
         [
             new Group("Б21-191-1", 7) { Id = 1 },
-            new Group("Б22-191-2", 5) { Id = 2 },
-            new Group("Б23-191-3", 3) { Id = 3 },
+            new Group("Б20-191-4", 8) { Id = 2 },
+            new Group("Б22-191-2", 5) { Id = 3 },
+            new Group("Б23-191-3", 3) { Id = 4 },
+            new Group("Б23-021-1", 4) { Id = 5 },
+            new Group("Б22-021-2", 6) { Id = 6 },
         ];
         builder.HasData(groups);
     }
