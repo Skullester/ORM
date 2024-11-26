@@ -1,7 +1,8 @@
 namespace ORM;
 
-public class Empty : INaming
+public class Empty : IElement
 {
+    public int Id { get; set; }
     public string Name { get; set; }
 
     public Empty(string name)

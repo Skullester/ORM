@@ -9,15 +9,11 @@ namespace ORM;
 
 public class Printer : IPrinter
 {
-    public Node<INaming>? ActiveNode { get; set; }
-
+    public Encoding Encoding { get; }
+    public IReadOnlyDictionary<Type, ConsoleColor> Colors => colors.AsReadOnly();
     private const ConsoleColor activeNodeColor = ConsoleColor.White;
-
     private const ConsoleColor welcomeColor = ConsoleColor.Gray;
-
-    private readonly IGraphFormatter<INaming> graphFormatter;
-
-
+    private readonly IGraphFormatter<IElement> graphFormatter;
     private readonly Dictionary<Type, ConsoleColor> colors = new Dictionary<Type, ConsoleColor>
     {
         [typeof(Group)] = ConsoleColor.Yellow,
@@ -27,14 +23,19 @@ public class Printer : IPrinter
         [typeof(Discipline)] = ConsoleColor.Green
     };
 
-
-    public Printer(IGraphFormatter<INaming> graphFormatter)
+    public Printer(IGraphFormatter<IElement> graphFormatter, Encoding encoding)
     {
-        Console.OutputEncoding = Encoding.UTF8;
+        Encoding = encoding;
         this.graphFormatter = graphFormatter;
+        SetEncoding();
     }
 
-    public void Print()
+    private void SetEncoding()
+    {
+        Console.OutputEncoding = Encoding;
+    }
+
+    public void Print(Node<IElement>? activeNode)
     {
         Console.Clear();
         var formattedGraph = graphFormatter.Format();
@@ -42,7 +43,7 @@ public class Printer : IPrinter
         PrintWithColor(welcomeStr, welcomeColor);
         foreach (var (str, node) in formattedGraph.Skip(1))
         {
-            var color = ReferenceEquals(ActiveNode, node) ? activeNodeColor : GetColorOf(node.Element);
+            var color = ReferenceEquals(activeNode, node) ? activeNodeColor : GetColorOf(node.Element);
             PrintWithColor(str, color);
         }
     }

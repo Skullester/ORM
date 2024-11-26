@@ -1,6 +1,6 @@
 namespace ORM;
 
-public class Group : INaming
+public class Group : IElement
 {
     public int Id { get; set; }
     public string Name { get; set; }

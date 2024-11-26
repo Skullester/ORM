@@ -1,6 +1,6 @@
 ﻿namespace ORM;
 
-public class Discipline : INaming
+public class Discipline : IElement
 {
     public int Id { get; set; }
 

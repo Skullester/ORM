@@ -1,6 +1,6 @@
 ﻿namespace ORM;
 
-public class Post : INaming
+public class Post : IElement
 {
     public int Id { get; set; }
     public string Name { get; set; }

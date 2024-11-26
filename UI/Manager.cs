@@ -1,3 +1,4 @@
+using System.Text;
 using UI;
 
 namespace ORM;
@@ -13,7 +14,7 @@ public class Manager : IManager
     private IList<Semester> cachedSemesters = null!;
     private IList<Grade> cachedGrades = null!;
     private IList<GradeStudentDiscipline> cachedGradesStudentDisciplines = null!;
-    private Graph<INaming> graph = null!;
+    private Graph<IElement> graph = null!;
 
     public IPrinter Printer { get; private set; } = null!;
 
@@ -33,21 +34,22 @@ public class Manager : IManager
         cachedGrades = context.Grades.ToList();
         cachedGradesStudentDisciplines = context.GradesStudentDisciplines.ToList();
         graph = BuildGraph();
-        var formatter = new GraphFormatter<INaming>(graph);
-        Printer = new Printer(formatter);
+        var formatter = new GraphFormatter<IElement>(graph);
+        Printer = new Printer(formatter, Encoding.UTF8);
     }
 
-    private Graph<INaming> BuildGraph()
+    private Graph<IElement> BuildGraph()
     {
-        var graph = new Graph<INaming>();
+        // ReSharper disable once LocalVariableHidesMember
+        var graph = new Graph<IElement>();
         var root = graph.AddNodeByValue(new Empty("Выберите:"), true);
-        var groupsNode = Node<INaming>.Build(cachedGroups, new Empty("Группы:"), root.DeepLevel + 1);
-        var teachersNode = Node<INaming>.Build(cachedTeachers, new Empty("Преподаватели:"), root.DeepLevel + 1);
-        var studentsLookup = cachedStudents.ToLookup(x => x.GroupId, x => x as INaming);
-        var studentsLookup2 = cachedDisciplines.ToLookup(x => x.SemesterId, x => x as INaming);
+        var groupsNode = Node<IElement>.Build(cachedGroups, new Empty("Группы:"), root.DeepLevel + 1);
+        var teachersNode = Node<IElement>.Build(cachedTeachers, new Empty("Преподаватели:"), root.DeepLevel + 1);
+        var studentsLookup = cachedStudents.ToLookup(x => x.GroupId, x => x as IElement);
+        var studentsLookup2 = cachedDisciplines.ToLookup(x => x.SemesterId, x => x as IElement);
         foreach (var subNode in groupsNode.SubNodes!)
         {
-            var studentsOfGroup = studentsLookup[(subNode.Element as Group)!.Id];
+            var studentsOfGroup = studentsLookup[subNode.Element.Id];
             var studentsNode = BuildNode(subNode, studentsOfGroup, new Empty("Студенты:"));
             foreach (var studentNode in studentsNode.SubNodes!)
             {
@@ -57,10 +59,11 @@ public class Manager : IManager
                 studentNode.AddNodesByValues(disciplines);
                 foreach (var disciplineNode in studentNode.SubNodes!)
                 {
-                    var discipline = disciplineNode.Element as Discipline;
+                    var disciplineElement = disciplineNode.Element;
                     var grade = cachedGradesStudentDisciplines.FirstOrDefault(x =>
-                        x.DisciplineId == discipline!.Id &&
-                        x.StudentId == student.Id) ?? new GradeStudentDiscipline(student.Id, discipline.Id, null);
+                                    x.DisciplineId == disciplineElement.Id &&
+                                    x.StudentId == student.Id) ??
+                                new GradeStudentDiscipline(student.Id, disciplineElement.Id, null);
                     disciplineNode.AddNodeByValue(grade);
                 }
             }
@@ -70,10 +73,10 @@ public class Manager : IManager
         root.AddNode(teachersNode);
         return graph;
 
-        static Node<INaming> BuildNode(Node<INaming> currNode, IEnumerable<INaming> subNodes, INaming element)
+        static Node<IElement> BuildNode(Node<IElement> currNode, IEnumerable<IElement> subNodes, IElement element)
         {
             // ReSharper disable once PossibleMultipleEnumeration
-            var build = Node<INaming>.Build(subNodes, element, currNode.DeepLevel + 1);
+            var build = Node<IElement>.Build(subNodes, element, currNode.DeepLevel + 1);
             return currNode.AddNode(build);
         }
     }
@@ -82,13 +85,12 @@ public class Manager : IManager
     {
         var root = graph.Root!;
         var pointer = 0;
-        var stack = new Stack<(Node<INaming> node, int pointer)>();
+        var stack = new Stack<(Node<IElement> node, int pointer)>();
         ConsoleKeyInfo cki;
         do
         {
             var activeNode = root.SubNodes![pointer];
-            Printer.ActiveNode = activeNode;
-            Printer.Print();
+            Printer.Print(activeNode);
             cki = Console.ReadKey(true);
             switch (cki.Key)
             {
@@ -98,32 +100,20 @@ public class Manager : IManager
                 case ConsoleKey.UpArrow:
                     pointer--;
                     break;
-                case ConsoleKey.RightArrow:
-                    if (activeNode.SubNodes != null)
-                    {
-                        stack.Push((root, pointer));
-                        activeNode.IsSubNodesOpened = true;
-                        root = activeNode;
-                        pointer = 0;
-                    }
-
+                case ConsoleKey.RightArrow when activeNode.SubNodes != null:
+                    stack.Push((root, pointer));
+                    activeNode.IsSubNodesOpened = true;
+                    root = activeNode;
+                    pointer = 0;
                     break;
-                case ConsoleKey.LeftArrow:
-                    if (stack.Count != 0)
-                    {
-                        root.IsSubNodesOpened = false;
-                        var (node, p) = stack.Pop();
-                        root = node;
-                        pointer = p;
-                    }
-
+                case ConsoleKey.LeftArrow when stack.Count != 0:
+                    root.IsSubNodesOpened = false;
+                    var (node, parentPointer) = stack.Pop();
+                    root = node;
+                    pointer = parentPointer;
                     break;
                 case ConsoleKey.Enter:
-                    if (activeNode.Element is GradeStudentDiscipline gdd)
-                    {
-                        SetGrade(gdd);
-                    }
-
+                    SetGrade(activeNode.Element);
                     break;
             }
 
@@ -131,23 +121,32 @@ public class Manager : IManager
         } while (cki.Key != ConsoleKey.Q);
     }
 
-    private void SetGrade(GradeStudentDiscipline gdd)
+    private void SetGrade(IElement element)
     {
-        int grade;
-        bool isError;
-        do
-        {
-            isError = !int.TryParse(Console.ReadLine()!, out grade) || grade < 2 || grade > 5;
-            if (isError) Printer.PrintError("Неверная оценка!");
-        } while (isError);
-
-        gdd.Grade = context.Grades.FirstOrDefault(x => x.Name == grade.ToString());
-        if (!context.GradesStudentDisciplines.Contains(gdd))
+        var gdd = element as GradeStudentDiscipline;
+        if (gdd is null) return;
+        var gradeString = GetInputGrade();
+        gdd.Grade = cachedGrades.FirstOrDefault(x => x.Name == gradeString);
+        if (!cachedGradesStudentDisciplines.Contains(gdd))
             context.GradesStudentDisciplines.Add(gdd);
         context.SaveChanges();
     }
 
-    private void ValidatePointer(ref int pointer, Node<INaming> node)
+    private string GetInputGrade()
+    {
+        string gradeString;
+        bool isError;
+        do
+        {
+            gradeString = Console.ReadLine()!;
+            isError = !int.TryParse(gradeString, out var grade) || grade < 2 || grade > 5;
+            if (isError) Printer.PrintError("Неверная оценка!");
+        } while (isError);
+
+        return gradeString;
+    }
+
+    private void ValidatePointer(ref int pointer, Node<IElement> node)
     {
         var subNodes = node.SubNodes;
         if (subNodes is null) return;

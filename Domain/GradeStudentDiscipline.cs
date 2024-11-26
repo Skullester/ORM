@@ -2,7 +2,7 @@
 
 namespace ORM;
 
-public class GradeStudentDiscipline : INaming
+public class GradeStudentDiscipline : IElement
 {
     public int Id { get; set; }
 

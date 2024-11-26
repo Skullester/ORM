@@ -1,6 +1,6 @@
 namespace ORM;
 
-public class Semester : INaming
+public class Semester : IElement
 {
     public int Id { get; set; }
     public string Name { get; set; }

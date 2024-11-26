@@ -1,6 +1,6 @@
 namespace ORM;
 
-public class Grade : INaming
+public class Grade : IElement
 {
     public int Id { get; set; }
 

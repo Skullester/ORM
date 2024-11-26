@@ -1,6 +1,6 @@
 ﻿namespace ORM;
 
-public class Person : INaming
+public class Person : IElement
 {
     public int Id { get; set; }
 

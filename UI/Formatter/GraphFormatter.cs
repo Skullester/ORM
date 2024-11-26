@@ -9,21 +9,12 @@ public class GraphFormatter<T> : IGraphFormatter<T>
     public GraphFormatter(Graph<T> graph)
     {
         Graph = graph;
-        CheckGraphCapacity();
-    }
-
-    private void CheckGraphCapacity()
-    {
-        if (!Graph.Any())
-        {
-            throw new Exception("Graph is empty");
-        }
     }
 
     public IEnumerable<(string, Node<T>)> Format()
     {
-        var graphRoot = Graph.Root!;
-        return graphRoot.IsSubNodesOpened ? FormatNode(graphRoot) : Enumerable.Empty<(string, Node<T>)>();
+        var root = Graph.Root!;
+        return root?.IsSubNodesOpened ?? false ? FormatNode(root) : Enumerable.Empty<(string, Node<T>)>();
     }
 
     private IEnumerable<(string, Node<T>)> FormatNode(Node<T> node, int prevLevelLength = 0)
