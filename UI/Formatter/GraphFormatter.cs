@@ -1,8 +1,10 @@
-﻿using ORM;
+﻿// ReSharper disable UseCollectionExpression
+
+using BLL.DTO;
 
 namespace UI;
 
-public class GraphFormatter<T> : IGraphFormatter<T>
+public class GraphFormatter<T> : IGraphFormatter<T> where T : IElementDTO
 {
     public Graph<T> Graph { get; }
 
@@ -19,18 +21,15 @@ public class GraphFormatter<T> : IGraphFormatter<T>
 
     private IEnumerable<(string, Node<T>)> FormatNode(Node<T> node, int prevLevelLength = 0)
     {
-        var elementName = node.Element!.ToString()!;
+        var elementName = node.Element.Name ?? "null";
         var element = elementName.PadLeft(prevLevelLength + elementName.Length);
         prevLevelLength = element.Length;
         yield return (element + Environment.NewLine, node);
         var subNodes = node.SubNodes ?? Enumerable.Empty<Node<T>>();
         if (!node.IsSubNodesOpened) yield break;
-        foreach (var item in subNodes)
+        foreach (var item in subNodes.SelectMany(x => FormatNode(x, prevLevelLength)))
         {
-            foreach (var str in FormatNode(item, prevLevelLength))
-            {
-                yield return str;
-            }
+            yield return item;
         }
     }
 }

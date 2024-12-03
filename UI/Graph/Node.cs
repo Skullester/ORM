@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 
-namespace ORM;
+// ReSharper disable UseCollectionExpression
+
+namespace UI;
 
 public class Node<T> : IEnumerable<Node<T>>
 {
@@ -10,23 +12,24 @@ public class Node<T> : IEnumerable<Node<T>>
     public int DeepLevel { get; }
     private List<Node<T>>? subNodes;
 
-    public Node(T element, bool isSubNodesOpened = false, int deepLevel = 0)
+    public Node(T element, int deepLevel, bool isSubNodesOpened = false)
     {
         Element = element;
         DeepLevel = deepLevel;
         IsSubNodesOpened = isSubNodesOpened;
     }
 
-    private Node(IEnumerable<Node<T>> elements, T element, int deepLevel, bool isSubNodesOpened = false) : this(element,
-        isSubNodesOpened, deepLevel)
+    internal Node(T element, int deepLevel, IEnumerable<Node<T>> subNodes, bool isSubNodesOpened = false) : this(
+        element,
+        deepLevel, isSubNodesOpened)
     {
-        subNodes = elements.ToList();
+        AddNodes(subNodes);
     }
 
     public Node<T> AddNodeByValue(T value, bool isSubNodesOpened = false)
     {
-        var newNode = new Node<T>(value, isSubNodesOpened, DeepLevel + 1);
-        ValidateListSubnodes();
+        var newNode = new Node<T>(value, DeepLevel + 1, isSubNodesOpened);
+        ValidateSubNodes();
         subNodes!.Add(newNode);
         return newNode;
     }
@@ -35,7 +38,7 @@ public class Node<T> : IEnumerable<Node<T>>
     {
         if (node.DeepLevel <= DeepLevel)
             throw new ArgumentException("Уровень глубины добавляемого узла должен быть больше текущего");
-        ValidateListSubnodes();
+        ValidateSubNodes();
         subNodes!.Add(node);
         return node;
     }
@@ -56,24 +59,23 @@ public class Node<T> : IEnumerable<Node<T>>
         }
     }
 
-    private void ValidateListSubnodes()
+    private void ValidateSubNodes()
     {
         subNodes ??= new List<Node<T>>();
     }
 
-    public static Node<T> Build(IEnumerable<T> subNodes, T element, int level, bool isNodeOpened = false) =>
-        new Node<T>(subNodes.Select(x => new Node<T>(x, false, level + 1)), element, level, isNodeOpened);
+    public static Node<T> Build(T element, IEnumerable<T> subNodes, int level, bool isNodeOpened = false) =>
+        Build(element, subNodes.Select(x => new Node<T>(x, level + 1, false)), level, isNodeOpened);
+
+    public static Node<T> Build(T element, IEnumerable<Node<T>> subNodes, int level, bool isNodeOpened = false) =>
+        new Node<T>(element, level, subNodes, isNodeOpened);
 
     public IEnumerator<Node<T>> GetEnumerator()
     {
         yield return this;
-        if (subNodes is null) yield break;
-        foreach (var node in subNodes)
+        foreach (var subNode in subNodes?.SelectMany(n => n) ?? Enumerable.Empty<Node<T>>())
         {
-            foreach (var subNode in node)
-            {
-                yield return subNode;
-            }
+            yield return subNode;
         }
     }
 
@@ -84,15 +86,7 @@ public class Node<T> : IEnumerable<Node<T>>
     private Node<T>? GetNode<TValue>(TValue finding, Func<Node<T>, TValue> func)
     {
         if (ReferenceEquals(func(this), finding)) return this;
-        if (subNodes is null) return null;
-        foreach (var item in subNodes)
-        {
-            var foundNode = item.GetNode(finding, func);
-            if (foundNode != null)
-                return foundNode;
-        }
-
-        return null;
+        return subNodes?.Select(item => item.GetNode(finding, func)).OfType<Node<T>>().FirstOrDefault();
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

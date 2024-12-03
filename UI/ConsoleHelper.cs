@@ -1,6 +1,6 @@
 ﻿// ReSharper disable PossibleMultipleEnumeration
 
-namespace ConsoleEx;
+namespace UI.Infrastructure;
 
 public static class ConsoleHelper
 {
@@ -38,6 +38,11 @@ public static class ConsoleHelper
         }
     }
 
+    public static void Clean()
+    {
+        Console.Clear();
+    }
+
     public static void SetColor(ConsoleColor color) => Console.ForegroundColor = color;
 
     public static void PrintLineWithColor(string text, ConsoleColor newColor, bool saveOldColor = true)
@@ -62,11 +67,6 @@ public static class ConsoleHelper
     public static void Print<T>(T text)
     {
         Console.Write(text);
-    }
-
-    public static void PrintOffer(string message, ConsoleColor offerColor)
-    {
-        PrintLineWithColor(message, offerColor);
     }
 
     public static void PrintError(string text) => PrintLineWithColor(text, ConsoleColor.Red);
