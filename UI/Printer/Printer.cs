@@ -40,6 +40,7 @@ public class Printer : IPrinter
     {
         Clean();
         var formattedGraph = graphFormatter.Format();
+        if (!formattedGraph.Any()) throw new ArgumentException("Graph is empty");
         PrintWelcomeNode(formattedGraph.First().Item1);
         foreach (var (str, node) in formattedGraph.Skip(1))
         {
