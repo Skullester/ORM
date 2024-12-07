@@ -17,8 +17,4 @@ public class ProviderContainer : IProviderContainer
         DisciplineProvider = disciplineProvider;
         GradeStudentDisciplineProvider = gradeStudentDisciplineProvider;
     }
-
-    public void Dispose()
-    {
-    }
 }

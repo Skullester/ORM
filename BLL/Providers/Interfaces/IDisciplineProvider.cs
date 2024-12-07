@@ -5,5 +5,5 @@ namespace BLL.Providers;
 public interface IDisciplineProvider
 {
     IEnumerable<DisciplineDTO> GetDisciplinesBySemester(int semesterId);
-    ILookup<int, DisciplineDTO> GetDisciplinesBySemester();
+    ILookup<int, DisciplineDTO> GetLookupBySemester();
 }

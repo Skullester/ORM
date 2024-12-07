@@ -25,7 +25,7 @@ public class DisciplineProvider : IDisciplineProvider
                     .To<DisciplineDTO>());
     }
 
-    public ILookup<int, DisciplineDTO> GetDisciplinesBySemester()
+    public ILookup<int, DisciplineDTO> GetLookupBySemester()
     {
         return repo.GetAll()
             .ToLookup(x => x.SemesterId, x =>

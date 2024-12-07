@@ -1,6 +1,6 @@
 ﻿namespace BLL.Providers.Container;
 
-public interface IProviderContainer : IDisposable
+public interface IProviderContainer
 {
     IGradeProvider GradeProvider { get; }
     IStudentProvider StudentProvider { get; }

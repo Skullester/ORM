@@ -29,42 +29,6 @@ public class Manager : IManager
         Printer = new Printer(formatter, Encoding.UTF8);
     }
 
-    private Graph<IElementDTO> BuildGraph()
-    {
-        var graph = Graph<IElementDTO>.Build(new Empty("Выберите:"), true);
-        var root = graph.Root!;
-        cacher.CacheAllEntities();
-        var groupsNode = Node<IElementDTO>.Build(new Empty("Группы:"), distributor.Get<GroupDTO>(), root.DeepLevel + 1);
-        var teachersNode = Node<IElementDTO>.Build(new Empty("Преподаватели:"), distributor.Get<TeacherDTO>(),
-            root.DeepLevel + 1);
-        foreach (var subNode in groupsNode.SubNodes!)
-        {
-            var studentsOfGroup = providerContainer.StudentProvider.GetStudentsByGroup(subNode.Element.Id);
-            var build = Node<IElementDTO>.Build(new Empty("Студенты:"), studentsOfGroup, subNode.DeepLevel + 1);
-            var studentsNode = subNode.AddNode(build);
-            foreach (var studentNode in studentsNode.SubNodes!)
-            {
-                var student = studentNode.Element as StudentDTO;
-                var semesterId = student!.Group!.SemesterId;
-                var disciplines = providerContainer.DisciplineProvider.GetDisciplinesBySemester(semesterId);
-                studentNode.AddNodesByValues(disciplines);
-                foreach (var disciplineNode in studentNode.SubNodes!)
-                {
-                    var disciplineElement = disciplineNode.Element;
-                    var gsd =
-                        providerContainer.GradeStudentDisciplineProvider.GetByStudentAndDiscipline(student.Id,
-                            disciplineElement.Id) ??
-                        new GradeStudentDisciplineDTO(student.Id, disciplineElement.Id, null);
-                    disciplineNode.AddNodeByValue(gsd);
-                }
-            }
-        }
-
-        root.AddNode(groupsNode);
-        root.AddNode(teachersNode);
-        return graph;
-    }
-
     public void Start()
     {
         var root = graph.Root!;
@@ -105,6 +69,42 @@ public class Manager : IManager
         } while (cki.Key != ConsoleKey.Q);
 
         Close();
+    }
+
+    private Graph<IElementDTO> BuildGraph()
+    {
+        var graph = Graph<IElementDTO>.Build(new Empty("Выберите:"), true);
+        var root = graph.Root!;
+        cacher.CacheAllEntities();
+        var groupsNode = Node<IElementDTO>.Build(new Empty("Группы:"), distributor.Get<GroupDTO>(), root.DeepLevel + 1);
+        var teachersNode = Node<IElementDTO>.Build(new Empty("Преподаватели:"), distributor.Get<TeacherDTO>(),
+            root.DeepLevel + 1);
+        foreach (var subNode in groupsNode.SubNodes!)
+        {
+            var studentsOfGroup = providerContainer.StudentProvider.GetStudentsByGroup(subNode.Element.Id);
+            var build = Node<IElementDTO>.Build(new Empty("Студенты:"), studentsOfGroup, subNode.DeepLevel + 1);
+            var studentsNode = subNode.AddNode(build);
+            foreach (var studentNode in studentsNode.SubNodes!)
+            {
+                var student = studentNode.Element as StudentDTO;
+                var semesterId = student!.Group!.SemesterId;
+                var disciplines = providerContainer.DisciplineProvider.GetDisciplinesBySemester(semesterId);
+                studentNode.AddNodesByValues(disciplines);
+                foreach (var disciplineNode in studentNode.SubNodes!)
+                {
+                    var disciplineElement = disciplineNode.Element;
+                    var gsd =
+                        providerContainer.GradeStudentDisciplineProvider.GetByStudentAndDiscipline(student.Id,
+                            disciplineElement.Id) ??
+                        new GradeStudentDisciplineDTO(student.Id, disciplineElement.Id, null);
+                    disciplineNode.AddNodeByValue(gsd);
+                }
+            }
+        }
+
+        root.AddNode(groupsNode);
+        root.AddNode(teachersNode);
+        return graph;
     }
 
     private void Close() => closer.Dispose();

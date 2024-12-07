@@ -16,7 +16,7 @@ public class StudentProvider : IStudentProvider
         this.mapper = mapper;
     }
 
-    public ILookup<int, StudentDTO> GetStudentsByGroup()
+    public ILookup<int, StudentDTO> GetLookupByGroup()
     {
         return repo.GetAll()
             .ToLookup(x => x.GroupId, student => mapper.From(student)!.To<StudentDTO>());

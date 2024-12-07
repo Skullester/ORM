@@ -17,13 +17,13 @@ public class Program
     {
         public override void Load()
         {
-            Kernel!.Bind<IManager>()
+            Bind<IManager>()
                 .To<Manager>()
                 .InSingletonScope();
-            Kernel.Bind<IMapper>()
+            Bind<IMapper>()
                 .To<Mapper>()
                 .InSingletonScope();
-            Kernel.Bind<ICloser>()
+            Bind<ICloser>()
                 .To<Closer>()
                 .InSingletonScope();
             BindDistributors();
@@ -33,42 +33,42 @@ public class Program
 
         private void BindCacher()
         {
-            Kernel!.Bind<ICacher>()
+            Bind<ICacher>()
                 .To<Cacher>()
                 .InSingletonScope();
         }
 
         private void BindDistributors()
         {
-            Kernel!.Bind<IDistributor>()
+            Bind<IDistributor>()
                 .To<Distributor>()
                 .InSingletonScope();
-            Kernel.Bind<DTODistributor<GroupDTO>>()
+            Bind<DTODistributor<GroupDTO>>()
                 .To<GroupDTODistributor>()
                 .InSingletonScope();
-            Kernel.Bind<DTODistributor<TeacherDTO>>()
+            Bind<DTODistributor<TeacherDTO>>()
                 .To<TeacherDTODistributor>()
                 .InSingletonScope();
-            Kernel.Bind<DTODistributor<SemesterDTO>>()
+            Bind<DTODistributor<SemesterDTO>>()
                 .To<SemesterDTODistributor>()
                 .InSingletonScope();
         }
 
         private void BindProviders()
         {
-            Kernel!.Bind<IProviderContainer>()
+            Bind<IProviderContainer>()
                 .To<ProviderContainer>()
                 .InSingletonScope();
-            Kernel!.Bind<IGradeProvider>()
+            Bind<IGradeProvider>()
                 .To<GradeProvider>()
                 .InSingletonScope();
-            Kernel.Bind<IStudentProvider>()
+            Bind<IStudentProvider>()
                 .To<StudentProvider>()
                 .InSingletonScope();
-            Kernel.Bind<IDisciplineProvider>()
+            Bind<IDisciplineProvider>()
                 .To<DisciplineProvider>()
                 .InSingletonScope();
-            Kernel.Bind<IGradeStudentDisciplineProvider>()
+            Bind<IGradeStudentDisciplineProvider>()
                 .To<GradeStudentDisciplineProvider>()
                 .InSingletonScope();
         }

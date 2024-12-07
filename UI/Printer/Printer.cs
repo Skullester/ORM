@@ -31,17 +31,12 @@ public class Printer : IPrinter
         SetEncoding();
     }
 
-    private void SetEncoding()
-    {
-        Console.OutputEncoding = Encoding;
-    }
-
     public void Print(Node<IElementDTO>? activeNode)
     {
         Clean();
         var formattedGraph = graphFormatter.Format();
-        if (!formattedGraph.Any()) throw new ArgumentException("Graph is empty");
-        PrintWelcomeNode(formattedGraph.First().Item1);
+        ValidateGraph(formattedGraph);
+        PrintWithColor(formattedGraph.First().Item1, welcomeColor);
         foreach (var (str, node) in formattedGraph.Skip(1))
         {
             var color = ReferenceEquals(activeNode, node) ? activeNodeColor : GetColorOf(node.Element);
@@ -49,9 +44,17 @@ public class Printer : IPrinter
         }
     }
 
-    private static void PrintWelcomeNode(string welcomeText) => PrintWithColor(welcomeText, welcomeColor);
-
     public void PrintError(string message) => ConsoleHelper.PrintError(message);
+
+    private void SetEncoding()
+    {
+        Console.OutputEncoding = Encoding;
+    }
+
+    private static void ValidateGraph(IEnumerable<(string, Node<IElementDTO>)> formattedGraph)
+    {
+        if (!formattedGraph.Any()) throw new ArgumentException("Graph is empty");
+    }
 
     private ConsoleColor GetColorOf(Type type)
     {
