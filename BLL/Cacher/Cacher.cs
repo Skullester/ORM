@@ -1,4 +1,5 @@
 ﻿using DAL.ORM;
+// ReSharper disable ReturnValueOfPureMethodIsNotUsed
 
 namespace BLL.Cache;
 

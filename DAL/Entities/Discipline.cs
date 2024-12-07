@@ -1,4 +1,5 @@
-﻿namespace DAL.Entities;
+﻿// ReSharper disable PropertyCanBeMadeInitOnly.Global
+namespace DAL.Entities;
 
 public class Discipline : IElement
 {
