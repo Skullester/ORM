@@ -1,6 +1,6 @@
 namespace DAL.Entities;
 
-public class Grade : IElement
+public class Grade
 {
     public int Id { get; set; }
 

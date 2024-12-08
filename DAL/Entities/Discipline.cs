@@ -1,7 +1,7 @@
 ﻿// ReSharper disable PropertyCanBeMadeInitOnly.Global
 namespace DAL.Entities;
 
-public class Discipline : IElement
+public class Discipline
 {
     public int Id { get; set; }
 

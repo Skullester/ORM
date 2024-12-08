@@ -1,6 +1,6 @@
 namespace DAL.Entities;
 
-public class Semester : IElement
+public class Semester
 {
     public int Id { get; set; }
     public string Name { get; set; }

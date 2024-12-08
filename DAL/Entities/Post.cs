@@ -1,6 +1,6 @@
 ﻿namespace DAL.Entities;
 
-public class Post : IElement
+public class Post
 {
     public int Id { get; set; }
     public string Name { get; set; }

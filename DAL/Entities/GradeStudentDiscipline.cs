@@ -2,7 +2,7 @@
 
 namespace DAL.Entities;
 
-public class GradeStudentDiscipline : IElement
+public class GradeStudentDiscipline
 {
     public int Id { get; set; }
 

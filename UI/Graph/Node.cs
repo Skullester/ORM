@@ -59,11 +59,6 @@ public class Node<T> : IEnumerable<Node<T>>
         }
     }
 
-    private void ValidateSubNodes()
-    {
-        subNodes ??= new List<Node<T>>();
-    }
-
     public static Node<T> Build(T element, IEnumerable<T> subNodes, int level, bool isNodeOpened = false) =>
         Build(element, subNodes.Select(x => new Node<T>(x, level + 1, false)), level, isNodeOpened);
 
@@ -82,6 +77,11 @@ public class Node<T> : IEnumerable<Node<T>>
     public Node<T>? this[Node<T> node] => GetNode(node, x => x);
 
     public Node<T>? this[T nodeElement] => GetNode(nodeElement, x => x.Element);
+
+    private void ValidateSubNodes()
+    {
+        subNodes ??= new List<Node<T>>();
+    }
 
     private Node<T>? GetNode<TValue>(TValue finding, Func<Node<T>, TValue> func)
     {

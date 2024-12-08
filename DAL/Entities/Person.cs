@@ -1,6 +1,6 @@
 ﻿namespace DAL.Entities;
 
-public class Person : IElement
+public class Person
 {
     public int Id { get; set; }
 
