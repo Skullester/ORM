@@ -1,6 +1,6 @@
 ﻿namespace BLL.DTO;
 
-public class GradeStudentDisciplineDTO : IElementDTO
+public class GradeInfoDTO : IElementDTO
 {
     public int Id { get; set; }
 
@@ -11,7 +11,7 @@ public class GradeStudentDisciplineDTO : IElementDTO
 
     public int DisciplineId { get; set; }
 
-    public GradeStudentDisciplineDTO(int studentId, int disciplineId, int? gradeId)
+    public GradeInfoDTO(int studentId, int disciplineId, int? gradeId)
     {
         StudentId = studentId;
         DisciplineId = disciplineId;

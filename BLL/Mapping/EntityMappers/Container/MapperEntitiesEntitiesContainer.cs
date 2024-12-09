@@ -15,8 +15,8 @@ public class MapperEntitiesEntitiesContainer : IMapperEntitiesContainer
     private IEntityMapper<Discipline, DisciplineDTO> disciplineMapper;
     private IEntityMapper<Semester, SemesterDTO> semesterMapper;
     private IEntityMapper<Post, PostDTO> postMapper;
-    private IEntityMapper<GradeStudentDiscipline, GradeStudentDisciplineDTO> gsdMapper;
-    private IEntityMapper<GradeStudentDisciplineDTO, GradeStudentDiscipline> gsdDtoMapper;
+    private IEntityMapper<GradeInfo, GradeInfoDTO> gradeInfoMapper;
+    private IEntityMapper<GradeInfoDTO, GradeInfo> gradeInfoDTOMapper;
     private IEntityMapper<GradeDTO, Grade> gradeDTOMapper;
     private readonly Type type;
 
@@ -30,9 +30,9 @@ public class MapperEntitiesEntitiesContainer : IMapperEntitiesContainer
         studentMapper = new StudentEntityMapper(mapper);
         disciplineMapper = new DisciplineEntityMapper();
         semesterMapper = new SemesterEntityMapper();
-        gsdMapper = new GradeStudentDisciplineEntityMapper(mapper);
+        gradeInfoMapper = new GradeInfoMapper(mapper);
         postMapper = new PostEntityMapper();
-        gsdDtoMapper = new GsdDTOEntityMapper(mapper);
+        gradeInfoDTOMapper = new GradeInfoDTOEntityMapper(mapper);
         gradeDTOMapper = new GradeDTOEntityMapper();
     }
 

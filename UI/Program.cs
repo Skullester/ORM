@@ -3,8 +3,8 @@ using BLL.Cache;
 using BLL.Distributors;
 using BLL.DTO;
 using BLL.Mapping;
-using BLL.Providers;
-using BLL.Providers.Container;
+using BLL.Services;
+using BLL.Services.Container;
 using BLL.Modules;
 using Ninject;
 using Ninject.Modules;
@@ -27,7 +27,7 @@ public class Program
                 .To<Closer>()
                 .InSingletonScope();
             BindDistributors();
-            BindProviders();
+            BindServices();
             BindCacher();
         }
 
@@ -54,22 +54,19 @@ public class Program
                 .InSingletonScope();
         }
 
-        private void BindProviders()
+        private void BindServices()
         {
-            Bind<IProviderContainer>()
-                .To<ProviderContainer>()
+            Bind<IServiceContainer>()
+                .To<ServiceContainer>()
                 .InSingletonScope();
-            Bind<IGradeProvider>()
-                .To<GradeProvider>()
+            Bind<IGradeService>()
+                .To<GradeService>()
                 .InSingletonScope();
-            Bind<IStudentProvider>()
-                .To<StudentProvider>()
+            Bind<IStudentService>()
+                .To<StudentService>()
                 .InSingletonScope();
-            Bind<IDisciplineProvider>()
-                .To<DisciplineProvider>()
-                .InSingletonScope();
-            Bind<IGradeStudentDisciplineProvider>()
-                .To<GradeStudentDisciplineProvider>()
+            Bind<IDisciplineService>()
+                .To<DisciplineService>()
                 .InSingletonScope();
         }
     }

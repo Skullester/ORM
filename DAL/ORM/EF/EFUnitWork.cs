@@ -16,7 +16,7 @@ public class EFUnitWork : IUnitWork
 
     public IGradeRepository GradeRepository { get; private set; } = null!;
 
-    public IGradeStudentDisciplineRepository GradeStudentDisciplineRepository { get; private set; } = null!;
+    public IGradeInfoRepository GradeInfoRepository { get; private set; } = null!;
 
     public IGroupRepository GroupRepository { get; private set; } = null!;
 
@@ -36,7 +36,7 @@ public class EFUnitWork : IUnitWork
     {
         DisciplineRepository = new EFDisciplineRepository(context);
         GradeRepository = new EFGradeRepository(context);
-        GradeStudentDisciplineRepository = new EFGradeStudentDisciplineRepository(context);
+        GradeInfoRepository = new EfGradeInfoRepository(context);
         GroupRepository = new EFGroupRepository(context);
         PersonRepository = new EFPersonRepository(context);
         PostRepository = new EFPostRepository(context);

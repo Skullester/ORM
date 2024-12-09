@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+// ReSharper disable CollectionNeverQueried.Global
+
 namespace DAL.Entities;
 
-public class GradeStudentDiscipline
+public class GradeInfo
 {
     public int Id { get; set; }
 
@@ -15,7 +17,7 @@ public class GradeStudentDiscipline
 
     [Timestamp] public byte[]? Timestamp { get; set; }
 
-    public GradeStudentDiscipline(int studentId, int disciplineId, int? gradeId)
+    public GradeInfo(int studentId, int disciplineId, int? gradeId)
     {
         StudentId = studentId;
         DisciplineId = disciplineId;

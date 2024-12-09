@@ -1,8 +1,8 @@
 ﻿using BLL.DTO;
 
-namespace BLL.Providers;
+namespace BLL.Services;
 
-public interface IDisciplineProvider
+public interface IDisciplineService
 {
     IEnumerable<DisciplineDTO> GetDisciplinesBySemester(int semesterId);
     ILookup<int, DisciplineDTO> GetLookupBySemester();

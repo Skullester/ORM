@@ -6,7 +6,7 @@ public interface IUnitWork : IDisposable
 {
     IDisciplineRepository DisciplineRepository { get; }
     IGradeRepository GradeRepository { get; }
-    IGradeStudentDisciplineRepository GradeStudentDisciplineRepository { get; }
+    IGradeInfoRepository GradeInfoRepository { get; }
     IGroupRepository GroupRepository { get; }
     IPersonRepository PersonRepository { get; }
     IPostRepository PostRepository { get; }

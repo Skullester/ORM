@@ -3,7 +3,7 @@ using BLL;
 using BLL.DTO;
 using BLL.Cache;
 using BLL.Distributors;
-using BLL.Providers.Container;
+using BLL.Services.Container;
 
 // ReSharper disable SwitchStatementMissingSomeEnumCasesNoDefault
 // ReSharper disable LocalVariableHidesMember
@@ -11,17 +11,17 @@ namespace UI;
 
 public class Manager : IManager
 {
-    private readonly Graph<IElementDTO> graph;
     public IPrinter Printer { get; }
-    private readonly IProviderContainer providerContainer;
+    private readonly Graph<IElementDTO> graph;
+    private readonly IServiceContainer serviceContainer;
     private readonly ICacher cacher;
     private readonly IDistributor distributor;
     private readonly ICloser closer;
 
-    public Manager(IDistributor distributor, IProviderContainer providerContainer, ICacher cacher, ICloser closer)
+    public Manager(IDistributor distributor, IServiceContainer serviceContainer, ICacher cacher, ICloser closer)
     {
         this.distributor = distributor;
-        this.providerContainer = providerContainer;
+        this.serviceContainer = serviceContainer;
         this.cacher = cacher;
         this.closer = closer;
         graph = BuildGraph();
@@ -81,23 +81,23 @@ public class Manager : IManager
             root.DeepLevel + 1);
         foreach (var subNode in groupsNode.SubNodes!)
         {
-            var studentsOfGroup = providerContainer.StudentProvider.GetStudentsByGroup(subNode.Element.Id);
+            var studentsOfGroup = serviceContainer.StudentService.GetStudentsByGroup(subNode.Element.Id);
             var build = Node<IElementDTO>.Build(new Empty("Студенты:"), studentsOfGroup, subNode.DeepLevel + 1);
             var studentsNode = subNode.AddNode(build);
             foreach (var studentNode in studentsNode.SubNodes!)
             {
                 var student = studentNode.Element as StudentDTO;
                 var semesterId = student!.Group!.SemesterId;
-                var disciplines = providerContainer.DisciplineProvider.GetDisciplinesBySemester(semesterId);
+                var disciplines = serviceContainer.DisciplineService.GetDisciplinesBySemester(semesterId);
                 studentNode.AddNodesByValues(disciplines);
                 foreach (var disciplineNode in studentNode.SubNodes!)
                 {
                     var disciplineElement = disciplineNode.Element;
-                    var gsd =
-                        providerContainer.GradeStudentDisciplineProvider.GetByStudentAndDiscipline(student.Id,
+                    var gradeInfoDto =
+                        serviceContainer.GradeService.GetGradeInfo(student.Id,
                             disciplineElement.Id) ??
-                        new GradeStudentDisciplineDTO(student.Id, disciplineElement.Id, null);
-                    disciplineNode.AddNodeByValue(gsd);
+                        new GradeInfoDTO(student.Id, disciplineElement.Id, null);
+                    disciplineNode.AddNodeByValue(gradeInfoDto);
                 }
             }
         }
@@ -111,9 +111,9 @@ public class Manager : IManager
 
     private void SetGrade(IElementDTO element)
     {
-        if (element is not GradeStudentDisciplineDTO gdd) return;
+        if (element is not GradeInfoDTO gradeInfo) return;
         var gradeName = GetInputGrade();
-        providerContainer.GradeProvider.SetGradeTo(gdd, gradeName);
+        serviceContainer.GradeService.SetGradeTo(gradeInfo, gradeName);
     }
 
     private string GetInputGrade()

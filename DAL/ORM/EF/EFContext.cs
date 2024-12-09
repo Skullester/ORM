@@ -22,7 +22,7 @@ public class EFContext : DbContext
     public DbSet<Semester> Semesters { get; set; }
     public DbSet<Grade> Grades { get; set; }
     public DbSet<Discipline> Disciplines { get; set; }
-    public DbSet<GradeStudentDiscipline> GradesStudentDisciplines { get; set; }
+    public DbSet<GradeInfo> GradeInfo { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

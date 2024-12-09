@@ -3,14 +3,14 @@ using BLL.Mapping;
 using DAL.ORM;
 using DAL.ORM.Repository;
 
-namespace BLL.Providers;
+namespace BLL.Services;
 
-public class DisciplineProvider : IDisciplineProvider
+public class DisciplineService : IDisciplineService
 {
     private readonly IDisciplineRepository repo;
     private readonly IMapper mapper;
 
-    public DisciplineProvider(IUnitWork unitWork, IMapper mapper)
+    public DisciplineService(IUnitWork unitWork, IMapper mapper)
     {
         repo = unitWork.DisciplineRepository;
         this.mapper = mapper;

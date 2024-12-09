@@ -18,7 +18,7 @@ public class Cacher : ICacher
         db.GradeRepository.GetAll().ToList();
         db.GroupRepository.GetAll().ToList();
         db.SemesterRepository.GetAll().ToList();
-        db.GradeStudentDisciplineRepository.GetAll().ToList();
+        db.GradeInfoRepository.GetAll().ToList();
         db.TeacherRepository.GetAll().ToList();
         db.StudentRepository.GetAll().ToList();
         db.PostRepository.GetAll().ToList();
