@@ -130,9 +130,9 @@ public class Manager : IManager
         return gradeText;
     }
 
-    private void SetPointer(ref int pointer, IReadOnlyList<Node<IElementDTO>>? subNodes)
+    private void SetPointer(ref int pointer, IReadOnlyCollection<Node<IElementDTO>>? subNodes)
     {
-        if (subNodes is null) return;
-        pointer = pointer == subNodes.Count ? 0 : pointer < 0 ? pointer = subNodes.Count - 1 : pointer;
+        if (subNodes is not null)
+            pointer = pointer == subNodes.Count ? 0 : pointer < 0 ? pointer = subNodes.Count - 1 : pointer;
     }
 }

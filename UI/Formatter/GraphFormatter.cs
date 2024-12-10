@@ -25,8 +25,8 @@ public class GraphFormatter<T> : IGraphFormatter<T> where T : IElementDTO
         var element = elementName.PadLeft(prevLevelLength + elementName.Length);
         prevLevelLength = element.Length;
         yield return (element + Environment.NewLine, node);
-        var subNodes = node.SubNodes ?? Enumerable.Empty<Node<T>>();
         if (!node.IsSubNodesOpened) yield break;
+        var subNodes = node.SubNodes ?? Enumerable.Empty<Node<T>>();
         foreach (var item in subNodes.SelectMany(x => FormatNode(x, prevLevelLength)))
         {
             yield return item;
