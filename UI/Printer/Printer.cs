@@ -35,7 +35,7 @@ public class Printer : IPrinter
     {
         Clean();
         var formattedGraph = graphFormatter.Format();
-        ValidateGraph(formattedGraph);
+        ThrowIfGraphEmpty(formattedGraph);
         PrintWithColor(formattedGraph.First().Item1, welcomeColor);
         foreach (var (str, node) in formattedGraph.Skip(1))
         {
@@ -51,7 +51,7 @@ public class Printer : IPrinter
         Console.OutputEncoding = Encoding;
     }
 
-    private static void ValidateGraph(IEnumerable<(string, Node<IElementDTO>)> formattedGraph)
+    private static void ThrowIfGraphEmpty(IEnumerable<(string, Node<IElementDTO>)> formattedGraph)
     {
         if (!formattedGraph.Any()) throw new ArgumentException("Graph is empty");
     }

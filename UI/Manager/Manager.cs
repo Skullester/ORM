@@ -107,13 +107,11 @@ public class Manager : IManager
         return graph;
     }
 
-    private void Close() => closer.Dispose();
-
     private void SetGrade(IElementDTO element)
     {
-        if (element is not GradeInfoDTO gradeInfo) return;
+        if (element is not GradeInfoDTO gradeInfoDto) return;
         var gradeName = GetInputGrade();
-        serviceContainer.GradeService.SetGradeTo(gradeInfo, gradeName);
+        serviceContainer.GradeService.SetGradeTo(gradeInfoDto, gradeName);
     }
 
     private string GetInputGrade()
@@ -135,4 +133,6 @@ public class Manager : IManager
         if (subNodes is not null)
             pointer = pointer == subNodes.Count ? 0 : pointer < 0 ? pointer = subNodes.Count - 1 : pointer;
     }
+
+    private void Close() => closer.Dispose();
 }

@@ -28,7 +28,8 @@ public class DisciplineConfiguration : IEntityTypeConfiguration<Discipline>
             new Discipline("Маркетинг", 8) { Id = 16 },
         };
 
-        builder.Property(x => x.Name).HasMaxLength(ConfigurationsPresets.MaxNameLength);
+        builder.Property(x => x.Name)
+            .HasMaxLength(ConfigurationsPresets.MaxNameLength);
         builder.HasData(disciplines);
     }
 }
