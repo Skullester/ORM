@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 // ReSharper disable UseCollectionExpression
 
@@ -30,7 +31,7 @@ public class Node<T> : IEnumerable<Node<T>>
     {
         var newNode = new Node<T>(value, DeepLevel + 1, isSubNodesOpened);
         ValidateSubNodes();
-        subNodes!.Add(newNode);
+        subNodes.Add(newNode);
         return newNode;
     }
 
@@ -39,7 +40,7 @@ public class Node<T> : IEnumerable<Node<T>>
         if (node.DeepLevel <= DeepLevel)
             throw new ArgumentException("Уровень глубины добавляемого узла должен быть больше текущего");
         ValidateSubNodes();
-        subNodes!.Add(node);
+        subNodes.Add(node);
         return node;
     }
 
@@ -78,6 +79,7 @@ public class Node<T> : IEnumerable<Node<T>>
 
     public Node<T>? this[T nodeElement] => GetNode(nodeElement, x => x.Element);
 
+    [DoesNotReturn]
     private void ValidateSubNodes()
     {
         subNodes ??= new List<Node<T>>();
