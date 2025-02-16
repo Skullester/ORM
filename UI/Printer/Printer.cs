@@ -24,6 +24,10 @@ public class Printer : IPrinter
         [typeof(DisciplineDTO)] = ConsoleColor.Green
     };
 
+    public Printer(IGraphFormatter<IElementDTO> graphFormatter) : this(graphFormatter, Encoding.UTF8)
+    {
+    }
+
     public Printer(IGraphFormatter<IElementDTO> graphFormatter, Encoding encoding)
     {
         Encoding = encoding;
